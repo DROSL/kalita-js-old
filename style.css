@@ -1,0 +1,33 @@
+#kalita-player {
+	width: 300px;
+	height: 150px;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	display: block;
+	background-color: #ffffff;
+	color: rgba(0, 0, 0, 0.87);
+	font-family: Helvetica,Arial,sans-serif;
+	box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 1px -1px, rgba(0, 0, 0, 0.14) 0px 1px 1px 0px, rgba(0, 0, 0, 0.12) 0px 1px 3px 0px;
+	border-radius: 8px;
+}
+
+#kalita-player button {
+	position: relative;
+	width: 48px;
+	height: 48px;
+	padding: 12px;
+	border-radius: 50%;
+	cursor: pointer;
+	border: none;
+	outline: none;
+	background-color: #ffffff;
+}
+
+	#kalita-player button:hover {
+		background-color: rgb(0, 0, 0, 0.04);
+	}
+
+	#kalita-player button > img {
+		opacity: 0.54;
+	}
