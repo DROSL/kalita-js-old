@@ -5,7 +5,9 @@ if (!player) {
 
 player.innerHTML = `
 	<div class="progress">
-
+		<div class="progressbar">
+			<div></div>
+		</div>
 	</div>
 	<div class="controls">
 		<button>
@@ -14,7 +16,7 @@ player.innerHTML = `
 		<button>
 			<img src="icons/rewind.svg">
 		</button>
-		<button>
+		<button class="primary">
 			<img src="icons/pause.svg">
 		</button>
 		<button>
@@ -30,8 +32,12 @@ window.addEventListener("mouseup", e => {
 	
 	let selection = window.getSelection();
 	if (selection && selection.toString()) {
-		console.log("Selection:", selection.toString());
+		//console.log("Selection:", selection.toString());
 		console.log(selection);
+
+		let parent = selection.baseNode.parentNode;
+		console.log(parent);
+
 	}
 
 });
