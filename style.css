@@ -102,3 +102,7 @@
 span.kalita-marked {
 	background-color: rgb(240, 238, 125, 0.5);
 }
+
+span.kalita-word {
+	background: rgb(232, 228, 42);
+}
