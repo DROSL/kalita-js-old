@@ -6,14 +6,37 @@
 
 	<title>Demo Kalita</title>
 
+	<style type="text/css">
+		body {
+			margin: 0;
+			padding: 0;
+			width: 670px;
+			margin: 50px auto;
+			font-family: Helvetica, Arial, sans-serif;
+			font-size: 1em;
+			font-weight: 400;
+			line-height: 1.5;
+		}
+
+		.demo-img {
+			width: 500px;
+			margin: auto;
+			display: block;
+		}
+	</style>
+
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 	<div id="kalita-player"></div>
 
-	<h1>Die Geschichte des Lautsprechers</h1>
-	<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-	<p>Hier nochmal ein ganz anderer Text, einfach nur zum Testen. Funktioniert das Text-Highlighting? Das hat sich nämlich als durchaus knifflig herausgestellt.</p>
+	<h1>Sprachsynthese</h1>
+	<p>Unter <b>Sprachsynthese</b> versteht man die künstliche Erzeugung der menschlichen <a href="#">Sprechstimme</a>. Ein <b>Text-to-Speech-System (TTS)</b> (oder Vorleseautomat) wandelt <a href="#">Fließtext</a> in eine akustische <b>Sprachausgabe</b>.</p>
+	<p style="display: none">Hier steht ein geheimer Text, der später nicht markiert werden sollte.</p>
+	<p>Grundsätzlich lassen sich zwei Ansätze zur Erzeugung von Sprachsignalen unterscheiden. Zum einen kann durch die sogenannte <a href="#">Signalmodellierung</a> auf Sprachaufnahmen (<a href="#">Samples</a>) zurückgegriffen werden. Zum anderen kann das Signal aber auch durch die sogenannte physiologische (artikulatorische) Modellierung vollständig im Rechner erzeugt werden. Während die ersten Systeme auf <a href="#">Formantsynthesen</a> beruhten, basieren die zurzeit industriell eingesetzten Systeme vorwiegend auf Signalmodellierung.</p>
+	<img src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Homer_Dudley_%28October_1940%29._%22The_Carrier_Nature_of_Speech%22._Bell_System_Technical_Journal%2C_XIX%284%29%3B495-515._--_Fig.7_Schematic_circuit_of_the_vocoder_%28derived_from_Fig.8%29.jpg" alt="Schema für den „Voder“ von Homer Dudley (1940)" class="demo-img">
+	<h2>Gegenwart</h2>
+	<p>Während frühe elektronische Sprachsynthesen noch sehr roboterhaft klangen und teilweise schwer verständlich waren, erreichen sie etwa seit der Jahrtausendwende eine Qualität, bei der es mitunter schwierig ist, sie von menschlichen Sprechern zu unterscheiden. Das ist hauptsächlich der Tatsache zu verdanken, dass sich die Technologie von der eigentlichen Synthese des Sprachsignals abgewandt hat und sich darauf konzentriert, aufgenommene Sprachsegmente optimal zu verketten.</p>
 
 	<script src="kalita.js"></script>
 </body>

@@ -7,7 +7,7 @@
 	display: inline-block;
 	background-color: #fff;
 	color: rgba(0, 0, 0, 0.87);
-	font-family: Helvetica,Arial,sans-serif;
+	font-family: Helvetica, Arial, sans-serif;
 	box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 1px -1px, rgba(0, 0, 0, 0.14) 0px 1px 1px 0px, rgba(0, 0, 0, 0.12) 0px 1px 3px 0px;
 	border-radius: 8px;
 	overflow: hidden;
@@ -72,6 +72,8 @@
 	}
 
 	#kalita-player button > img {
+		width: 24px;
+		height: 24px;
 		opacity: 0.54;
 	}
 
@@ -95,4 +97,8 @@
 
 #kalita-player .progress {
 	padding: 8px;
+}
+
+span.kalita-marked {
+	background-color: rgb(240, 238, 125, 0.5);
 }
