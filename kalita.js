@@ -1,32 +1,71 @@
-const player = document.getElementById("kalita-player");
-if (!player) {
-	console.error('Kalita: Failed to locate "kalita-player" element in document.');
+class Player {
+	constructor() {
+		const wrapper = document.createElement("div");
+		wrapper.id = "kalita-player";
+
+		const progress = document.createElement("div");
+		progress.className = "progress";
+		wrapper.appendChild(progress);
+
+		const progressBar = document.createElement("div");
+		progressBar.className = "progressbar";
+		progress.appendChild(progressBar);
+
+		const div = document.createElement("div");
+		progressBar.appendChild(div);
+
+		const controls = document.createElement("div");
+		controls.className = "controls";
+		wrapper.appendChild(controls);
+
+		const buttonReplay = document.createElement("button");
+		const imgReplay = document.createElement("img");
+		imgReplay.src = "icons/replay.svg";
+		buttonReplay.appendChild(imgReplay);
+		controls.appendChild(buttonReplay);
+
+		const buttonRewind = document.createElement("button");
+		const imgRewind = document.createElement("img");
+		buttonRewind.appendChild(imgRewind);
+		imgRewind.src = "icons/rewind.svg";
+		controls.appendChild(buttonRewind);
+
+		const buttonPlayPause = document.createElement("button");
+		buttonPlayPause.className = "primary";
+		const imgPlayPause = document.createElement("img");
+		imgPlayPause.src = "icons/play.svg";
+		buttonPlayPause.appendChild(imgPlayPause);
+		controls.appendChild(buttonPlayPause);
+
+		const buttonFastForward = document.createElement("button");
+		const imgFastForward = document.createElement("img");
+		imgFastForward.src = "icons/fastforward.svg";
+		buttonFastForward.appendChild(imgFastForward);
+		controls.appendChild(buttonFastForward);
+
+		const buttonClose = document.createElement("button");
+		const imgClose = document.createElement("img");
+		imgClose.src = "icons/close.svg";
+		buttonClose.appendChild(imgClose);
+		controls.appendChild(buttonClose);
+
+		this.wrapper = wrapper;
+		this.buttonReplay = buttonReplay;
+		this.buttonRewind = buttonRewind;
+		this.buttonPlayPause = buttonPlayPause;
+		this.buttonFastForward = buttonFastForward;
+		this.buttonClose = buttonClose;
+	}
+
+	insert(elem) {
+		elem.replaceWith(this.wrapper);
+	}
+
 }
 
-player.innerHTML = `
-	<div class="progress">
-		<div class="progressbar">
-			<div></div>
-		</div>
-	</div>
-	<div class="controls">
-		<button>
-			<img src="icons/replay.svg">
-		</button>
-		<button>
-			<img src="icons/rewind.svg">
-		</button>
-		<button class="primary">
-			<img src="icons/pause.svg">
-		</button>
-		<button>
-			<img src="icons/fastforward.svg">
-		</button>
-		<button>
-			<img src="icons/close.svg">
-		</button>
-	</div>
-`;
+const playerElem = document.getElementById("kalita-player");
+const player = new Player();
+player.insert(playerElem);
 
 class XSelection {
 	constructor(selection) {
@@ -172,6 +211,8 @@ class XSelection {
 
 }
 
+var xsel = null;
+
 window.addEventListener("mouseup", e => {
 	
 	const selection = window.getSelection();
@@ -179,14 +220,18 @@ window.addEventListener("mouseup", e => {
 		//console.log("Selection:", selection.toString());
 		//console.log(selection);
 
-		const xsel = new XSelection(selection);
+		xsel = new XSelection(selection);
 		console.log(xsel.nodes);
 
 		xsel.extend();
 		xsel.highlight();
 
-		xsel.play(10000);
+		//xsel.play(10000);
 
 	}
 
 });
+
+player.buttonPlayPause.onclick = function(e) {
+	xsel.play(10000);
+}
