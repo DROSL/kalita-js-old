@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Kalita Server Demo</title>
+    <script>
+      function sendMessage(){
+        var message = document.getElementById('userInput').value;
+        socket.send(message);
+      }
+ 
+      function showMessage(text) {
+        document.getElementById('message').innerHTML = text;
+      }
+ 
+      function subscribeToWebSocket(){
+        if('WebSocket' in window){
+          socket = new WebSocket('ws://localhost:8080/marytts');
+          socket.onopen = function(){
+            showMessage('Connected to WebSocket.');
+          };
+          socket.onmessage = function(msg){
+            if(msg.data instanceof Blob) {
+              const file = new File([msg.data], "voice.wav")
+              audio = URL.createObjectURL(file)
+              let sound = document.createElement('audio');
+              sound.src = audio;
+              sound.play();
+            }
+            console.log(msg);
+          };
+          socket.onerror = function(msg){
+            showMessage('Sorry but there was an error.');
+          };
+          socket.onclose = function(){
+            showMessage('Server offline.');
+          };
+        }
+      }
+    </script>
+  </head>
+  <body onload="javascript:subscribeToWebSocket()">
+    <input id="userInput" type="text">
+    <button onclick="javascript:sendMessage()">TTS</button>
+    <div id="message"></div>
+  </body>
+</html>
