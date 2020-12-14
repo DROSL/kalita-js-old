@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/50206261/102134585-07456f80-3e57-11eb-9a90-d9c81ee48c1d.png" alt="Logo Kalita" width="200">
+</p>
+
 # kalita-js
 
 **Kalita** is text-to-speech software with a special focus on data minimisation and protection. We do not collect any personal data, do not set tracking cookies and do not outsource our service to third-party cloud solutions. The speech synthesis takes place on-premises on your own server and still offers all the convenience of a conventional readspeaker.
