@@ -80,15 +80,19 @@ class XSelection {
 		const selection = this.selection;
 		const parent = this.range.commonAncestorContainer;
 
-		const recur = function(parentNode) {
+		const isVisible = function(elem) {
+			return Boolean(elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length);
+		}
+
+		const recur = function(node) {
 			let selectedNodes = [];
 
-			if (parentNode.childNodes.length > 0) {
-				for (let node of parentNode.childNodes) {
-					selectedNodes = selectedNodes.concat(recur(node));
+			if (node.childNodes.length > 0) {
+				for (let childNode of node.childNodes) {
+					selectedNodes = selectedNodes.concat(recur(childNode));
 				}
-			} else if (parentNode.nodeType === 3 && selection.containsNode(parentNode)) {
-				selectedNodes.push(parentNode);
+			} else if (node.nodeType === Node.TEXT_NODE && node.length > 0 && isVisible(node.parentElement) && selection.containsNode(node)) {
+				selectedNodes.push(node);
 			}
 
 			return selectedNodes;
@@ -203,9 +207,14 @@ class XSelection {
 	// TODO: still a little bit buggy
 	// elements do not seem to be really removed from the document
 	destroy() {
-		let span;
-		while (span = this.spans.pop()) {
-			span.replaceWith(...span.childNodes);
+		let wordNode;
+		while (wordNode = this.wordNodes.pop()) {
+			wordNode.replaceWith(...wordNode.childNodes);
+		}
+
+		let markNode;
+		while (markNode = this.markNodes.pop()) {
+			markNode.replaceWith(...markNode.childNodes);
 		}
 	}
 
@@ -227,6 +236,8 @@ window.addEventListener("mouseup", e => {
 		xsel.highlight();
 
 		//xsel.play(10000);
+
+		//xsel.destroy();
 
 	}
 
