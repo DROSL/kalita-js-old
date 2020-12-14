@@ -1,60 +1,89 @@
 class Player {
 	constructor() {
-		const wrapper = document.createElement("div");
-		wrapper.id = "kalita-player";
+		const $ = (tagName) => {
+			const elem = document.createElement(tagName);
 
-		const progress = document.createElement("div");
-		progress.className = "progress";
-		wrapper.appendChild(progress);
+			elem._id = (stringID) => {
+				elem.id = stringID;
+				return elem;
+			}
 
-		const progressBar = document.createElement("div");
-		progressBar.className = "progressbar";
-		progress.appendChild(progressBar);
+			elem.append = (childElem) => {
+				elem.appendChild(childElem);
+				return elem;
+			}
 
-		const div = document.createElement("div");
-		progressBar.appendChild(div);
+			elem.class = (className) => {
+				elem.className = className;
+				return elem;
+			}
 
-		const controls = document.createElement("div");
-		controls.className = "controls";
-		wrapper.appendChild(controls);
+			elem.attr = (name, value) => {
+				elem.setAttribute(name, value);
+				return elem;
+			}
 
-		const buttonReplay = document.createElement("button");
-		const imgReplay = document.createElement("img");
-		imgReplay.src = "icons/replay.svg";
-		buttonReplay.appendChild(imgReplay);
-		controls.appendChild(buttonReplay);
+			elem.on = (type, listener) => {
+				elem.addEventListener(type, listener);
+				return elem;
+			}
 
-		const buttonRewind = document.createElement("button");
-		const imgRewind = document.createElement("img");
-		buttonRewind.appendChild(imgRewind);
-		imgRewind.src = "icons/rewind.svg";
-		controls.appendChild(buttonRewind);
+			return elem;
+		}
 
-		const buttonPlayPause = document.createElement("button");
-		buttonPlayPause.className = "primary";
-		const imgPlayPause = document.createElement("img");
-		imgPlayPause.src = "icons/play.svg";
-		buttonPlayPause.appendChild(imgPlayPause);
-		controls.appendChild(buttonPlayPause);
+		this.progressbar = $("div");
 
-		const buttonFastForward = document.createElement("button");
-		const imgFastForward = document.createElement("img");
-		imgFastForward.src = "icons/fastforward.svg";
-		buttonFastForward.appendChild(imgFastForward);
-		controls.appendChild(buttonFastForward);
+		this.buttonReplay = $("button")
+			.append($("img")
+				.attr("src", "icons/replay.svg")
+			);
 
-		const buttonClose = document.createElement("button");
-		const imgClose = document.createElement("img");
-		imgClose.src = "icons/close.svg";
-		buttonClose.appendChild(imgClose);
-		controls.appendChild(buttonClose);
+		this.buttonRewind = $("button")
+			.append($("img")
+				.attr("src", "icons/rewind.svg")
+			);
 
-		this.wrapper = wrapper;
-		this.buttonReplay = buttonReplay;
-		this.buttonRewind = buttonRewind;
-		this.buttonPlayPause = buttonPlayPause;
-		this.buttonFastForward = buttonFastForward;
-		this.buttonClose = buttonClose;
+		this.imgPlayPause = $("img").attr("src", "icons/play.svg");
+		this.buttonPlayPause = $("button")
+			.class("primary")
+			.append(this.imgPlayPause)
+			.on("click", (e) => {
+				this.imgPlayPause.attr("src", this.playing ?
+					"icons/play.svg" :
+					"icons/pause.svg"
+				);
+				this.playing = !this.playing;
+			});
+
+		this.buttonFastForward = $("button")
+			.append($("img")
+				.attr("src", "icons/fastforward.svg")
+			);
+
+		this.buttonClose = $("button")
+			.append($("img")
+				.attr("src", "icons/close.svg")
+			);
+
+		this.wrapper = $("div")
+			._id("kalita-player")
+			.append($("div")
+				.class("progress")
+				.append($("div")
+					.class("progressbar")
+					.append(this.progressbar)
+				)
+			)
+			.append($("div")
+				.class("controls")
+				.append(this.buttonReplay)
+				.append(this.buttonRewind)
+				.append(this.buttonPlayPause)
+				.append(this.buttonFastForward)
+				.append(this.buttonClose)
+			);
+
+		this.playing = false;
 	}
 
 	insert(elem) {
