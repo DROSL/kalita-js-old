@@ -8,8 +8,10 @@ class Player {
 				return elem;
 			}
 
-			elem.append = (childElem) => {
-				elem.appendChild(childElem);
+			elem.append = (...childNodes) => {
+				for (let node of childNodes) {
+					elem.appendChild(node);
+				}
 				return elem;
 			}
 
@@ -76,11 +78,7 @@ class Player {
 			)
 			.append($("div")
 				.class("controls")
-				.append(this.buttonReplay)
-				.append(this.buttonRewind)
-				.append(this.buttonPlayPause)
-				.append(this.buttonFastForward)
-				.append(this.buttonClose)
+				.append(this.buttonReplay, this.buttonRewind, this.buttonPlayPause, this.buttonFastForward, this.buttonClose)
 			);
 
 		this.playing = false;
