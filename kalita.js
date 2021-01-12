@@ -45,17 +45,12 @@ class Player {
 				.attr("src", "icons/rewind.svg")
 			);
 
-		this.imgPlayPause = $("img").attr("src", "icons/play.svg");
+		this.imgPlayPause = $("img")
+			.attr("src", "icons/play.svg");
 		this.buttonPlayPause = $("button")
 			.class("primary")
 			.append(this.imgPlayPause)
-			.on("click", (e) => {
-				this.imgPlayPause.attr("src", this.playing ?
-					"icons/play.svg" :
-					"icons/pause.svg"
-				);
-				this.playing = !this.playing;
-			});
+			.on("click", (e) => this.playPause(this));
 
 		this.buttonFastForward = $("button")
 			.append($("img")
@@ -82,10 +77,55 @@ class Player {
 			);
 
 		this.playing = false;
+		this.audio = null;
+		this.xsel = null;
 	}
 
 	insert(elem) {
 		elem.replaceWith(this.wrapper);
+	}
+
+	playPause(player) {
+
+		if (this.playing) {
+			this.pause(player);
+			this.playing = false;
+			this.imgPlayPause.attr("src", "icons/play.svg");
+		} else {
+			this.play(player);
+			this.playing = true;
+			this.imgPlayPause.attr("src", "icons/pause.svg");
+		}
+
+	}
+
+	play(player) {
+		const selection = window.getSelection();
+		if (selection && selection.toString()) {
+			//console.log("Selection:", selection.toString());
+			//console.log(selection);
+			let text = encodeURIComponent(selection.toString());
+
+			this.xsel = new XSelection(selection);
+			this.xsel.extend();
+			this.xsel.highlight();
+
+			this.audio = new Audio(`http://localhost:8080/speak?text=${text}`);
+			this.audio.addEventListener("canplaythrough", (e) => {
+				this.audio.play();
+				this.xsel.play(this.audio.duration * 1000);
+			});
+
+		} else {
+			if (this.xsel) {
+				
+			}
+		}
+	}
+
+	pause(player) {
+		this.audio.pause();
+		this.xsel.pause();
 	}
 
 }
@@ -101,6 +141,7 @@ class XSelection {
 		this.text = selection.toString();
 		this.markNodes = [];
 		this.wordNodes = [];
+		this.timer = null;
 	}
 
 	get nodes() {
@@ -196,7 +237,9 @@ class XSelection {
 		this.selection.empty();
 	}
 
-	play(duration) {
+	play(duration, start) {
+		clearInterval(this.timer);
+
 		const startTime = new Date();
 		const endTime = new Date(startTime);
 		endTime.setMilliseconds(endTime.getMilliseconds() + duration);
@@ -228,7 +271,11 @@ class XSelection {
 
 
 		}
-		const timer = setInterval(tick, 100);
+		this.timer = setInterval(tick, 100);
+	}
+
+	pause() {
+		clearInterval(this.timer);
 	}
 
 	// TODO: still a little bit buggy
@@ -245,31 +292,4 @@ class XSelection {
 		}
 	}
 
-}
-
-var xsel = null;
-
-window.addEventListener("mouseup", e => {
-	
-	const selection = window.getSelection();
-	if (selection && selection.toString()) {
-		//console.log("Selection:", selection.toString());
-		//console.log(selection);
-
-		xsel = new XSelection(selection);
-		console.log(xsel.nodes);
-
-		xsel.extend();
-		xsel.highlight();
-
-		//xsel.play(10000);
-
-		//xsel.destroy();
-
-	}
-
-});
-
-player.buttonPlayPause.onclick = function(e) {
-	xsel.play(10000);
 }
