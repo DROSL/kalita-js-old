@@ -1,141 +1,42 @@
-class Player {
-	constructor() {
-		const $ = (tagName) => {
-			const elem = document.createElement(tagName);
+const API_ENDPOINT = "http://localhost:8080/speak";
 
-			elem._id = (stringID) => {
-				elem.id = stringID;
-				return elem;
-			}
+const PLAYER = document.createElement("audio");
+PLAYER.controls = true;
+PLAYER.autoplay = true;
 
-			elem.append = (...childNodes) => {
-				for (let node of childNodes) {
-					elem.appendChild(node);
-				}
-				return elem;
-			}
+PLAYER.addEventListener("play", () => {
+	SELECTION.play(PLAYER.duration, PLAYER.currentTime);
+});
 
-			elem.class = (className) => {
-				elem.className = className;
-				return elem;
-			}
+PLAYER.addEventListener("pause", () => {
+	SELECTION.pause();
+});
 
-			elem.attr = (name, value) => {
-				elem.setAttribute(name, value);
-				return elem;
-			}
+document.getElementById("kalita-player").appendChild(PLAYER);
 
-			elem.on = (type, listener) => {
-				elem.addEventListener(type, listener);
-				return elem;
-			}
+let SELECTION = null;
 
-			return elem;
+// TODO: selection by keyboard will not fire event
+document.addEventListener("mouseup", () => {
+	const selection = window.getSelection();
+	if (selection && selection.toString()) {
+		let text = encodeURIComponent(selection.toString());
+
+		if (SELECTION) {
+			SELECTION.destroy();
 		}
+		SELECTION = new XSelection(selection);
+		SELECTION.extend();
+		SELECTION.highlight();
 
-		this.progressbar = $("div");
-
-		this.buttonReplay = $("button")
-			.append($("img")
-				.attr("src", "icons/replay.svg")
-			);
-
-		this.buttonRewind = $("button")
-			.append($("img")
-				.attr("src", "icons/rewind.svg")
-			);
-
-		this.imgPlayPause = $("img")
-			.attr("src", "icons/play.svg");
-		this.buttonPlayPause = $("button")
-			.class("primary")
-			.append(this.imgPlayPause)
-			.on("click", (e) => this.playPause(this));
-
-		this.buttonFastForward = $("button")
-			.append($("img")
-				.attr("src", "icons/fastforward.svg")
-			);
-
-		this.buttonClose = $("button")
-			.append($("img")
-				.attr("src", "icons/close.svg")
-			);
-
-		this.wrapper = $("div")
-			._id("kalita-player")
-			.append($("div")
-				.class("progress")
-				.append($("div")
-					.class("progressbar")
-					.append(this.progressbar)
-				)
-			)
-			.append($("div")
-				.class("controls")
-				.append(this.buttonReplay, this.buttonRewind, this.buttonPlayPause, this.buttonFastForward, this.buttonClose)
-			);
-
-		this.playing = false;
-		this.audio = null;
-		this.xsel = null;
-	}
-
-	insert(elem) {
-		elem.replaceWith(this.wrapper);
-	}
-
-	playPause(player) {
-
-		if (this.playing) {
-			this.pause(player);
-			this.playing = false;
-			this.imgPlayPause.attr("src", "icons/play.svg");
-		} else {
-			this.play(player);
-			this.playing = true;
-			this.imgPlayPause.attr("src", "icons/pause.svg");
-		}
-
-	}
-
-	play(player) {
-		const selection = window.getSelection();
-		if (selection && selection.toString()) {
-			//console.log("Selection:", selection.toString());
-			//console.log(selection);
-			let text = encodeURIComponent(selection.toString());
-
-			if (this.xsel) {
-				this.xsel.destroy();
-			}
-			this.xsel = new XSelection(selection);
-			this.xsel.extend();
-			this.xsel.highlight();
-
-			this.audio = new Audio(`http://localhost:8080/speak?text=${text}`);
-			this.audio.addEventListener("canplaythrough", (e) => {
-				this.audio.play();
-				this.xsel.play(this.audio.duration * 1000);
-			});
-		} else {
-			if (this.xsel) {
-				this.audio.play();
-				this.xsel.play(this.audio.duration * 1000, this.audio.currentTime * 1000);
-			}
+		PLAYER.src = `${API_ENDPOINT}?text=${text}&language=german`;
+	} else {
+		if (SELECTION) {
+			PLAYER.play();
+			SELECTION.play(PLAYER.duration * 1000, PLAYER.currentTime * 1000);
 		}
 	}
-
-	pause(player) {
-		this.audio.pause();
-		this.xsel.pause();
-	}
-
-}
-
-const playerElem = document.getElementById("kalita-player");
-const player = new Player();
-player.insert(playerElem);
+});
 
 class XSelection {
 	constructor(selection) {
@@ -247,10 +148,10 @@ class XSelection {
 		const nowTime = new Date();
 
 		const startTime = new Date(nowTime);
-		startTime.setMilliseconds(startTime.getMilliseconds() - offset);
+		startTime.setSeconds(startTime.getSeconds() - offset);
 
 		const endTime = new Date(startTime);
-		endTime.setMilliseconds(endTime.getMilliseconds() + duration);
+		endTime.setSeconds(endTime.getSeconds() + duration);
 
 		let charTotal = this.wordNodes.reduce((accumulator, wordNode) => accumulator + wordNode.lastChild.length, 0);
 		let charCount = 0;
@@ -258,7 +159,7 @@ class XSelection {
 			.map(word => {
 				let wordTime = new Date(startTime);
 				let wordDuration = charCount / charTotal * duration;
-				wordTime.setMilliseconds(wordTime.getMilliseconds() + charCount / charTotal * duration);
+				wordTime.setSeconds(wordTime.getSeconds() + charCount / charTotal * duration);
 				charCount += word.lastChild.length;
 				return {
 					object: word,
