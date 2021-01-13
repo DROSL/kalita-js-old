@@ -15,7 +15,7 @@
 
 Copy-paste the stylesheet `<link>` into your `<head>` before all other stylesheets to load our CSS:
 ```html
-<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="kalita.css">
 ```
 
 ### HTML
