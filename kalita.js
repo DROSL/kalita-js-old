@@ -106,6 +106,9 @@ class Player {
 			//console.log(selection);
 			let text = encodeURIComponent(selection.toString());
 
+			if (this.xsel) {
+				this.xsel.destroy();
+			}
 			this.xsel = new XSelection(selection);
 			this.xsel.extend();
 			this.xsel.highlight();
@@ -115,10 +118,10 @@ class Player {
 				this.audio.play();
 				this.xsel.play(this.audio.duration * 1000);
 			});
-
 		} else {
 			if (this.xsel) {
-				
+				this.audio.play();
+				this.xsel.play(this.audio.duration * 1000, this.audio.currentTime * 1000);
 			}
 		}
 	}
@@ -141,6 +144,7 @@ class XSelection {
 		this.text = selection.toString();
 		this.markNodes = [];
 		this.wordNodes = [];
+		this.markedWord = null;
 		this.timer = null;
 	}
 
@@ -237,39 +241,52 @@ class XSelection {
 		this.selection.empty();
 	}
 
-	play(duration, start) {
+	play(duration, offset = 0, callback) {
 		clearInterval(this.timer);
 
-		const startTime = new Date();
+		const nowTime = new Date();
+
+		const startTime = new Date(nowTime);
+		startTime.setMilliseconds(startTime.getMilliseconds() - offset);
+
 		const endTime = new Date(startTime);
 		endTime.setMilliseconds(endTime.getMilliseconds() + duration);
 
 		let charTotal = this.wordNodes.reduce((accumulator, wordNode) => accumulator + wordNode.lastChild.length, 0);
 		let charCount = 0;
-		const words = this.wordNodes.map(word => {
-			let wordTime = new Date(startTime);
-			wordTime.setMilliseconds(wordTime.getMilliseconds() + charCount / charTotal * duration);
-			charCount += word.lastChild.length;
-			return {
-				object: word,
-				startAt: wordTime
-			}
-		});
+		const words = this.wordNodes
+			.map(word => {
+				let wordTime = new Date(startTime);
+				let wordDuration = charCount / charTotal * duration;
+				wordTime.setMilliseconds(wordTime.getMilliseconds() + charCount / charTotal * duration);
+				charCount += word.lastChild.length;
+				return {
+					object: word,
+					startAt: wordTime
+				}
+			})
+			.filter(word => word.startAt >= nowTime);
 		let currentWord = -1;
 
 		const tick = function() {
 			let tickTime = new Date();
+
 			if (tickTime > endTime) {
-				words[currentWord].object.classList.remove("kalita-word");
-				window.clearInterval(timer);
-			} if (currentWord + 1 < words.length && tickTime >= words[currentWord + 1].startAt) {
-				if (currentWord >= 0) {
-					words[currentWord].object.classList.remove("kalita-word");
+				this.markedWord.classList.remove("kalita-word");
+				this.markedWord == null;
+				clearInterval(this.timer);
+
+				if (typeof callback === "function") {
+					callback();
 				}
-				words[++currentWord].object.classList.add("kalita-word");
+			} if (currentWord + 1 < words.length && tickTime >= words[currentWord + 1].startAt) {
+				if (this.markedWord) {
+					this.markedWord.classList.remove("kalita-word");
+				}
+
+				this.markedWord = words[++currentWord].object;
+				this.markedWord.classList.add("kalita-word");
 			}
-
-
 		}
 		this.timer = setInterval(tick, 100);
 	}
