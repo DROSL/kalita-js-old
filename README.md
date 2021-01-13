@@ -18,6 +18,13 @@ Copy-paste the stylesheet `<link>` into your `<head>` before all other styleshee
 <link rel="stylesheet" type="text/css" href="style.css">
 ```
 
+### HTML
+
+Add the following `<div>` element to a position on your page where the graphical interface should be displayed:
+```html
+<div id="kalita-player"></div>
+```
+
 ### JS
 
 Our components require the use of JavaScript to function. Place the following `<script>` near the end of your pages, right before the closing `</body>` tag, to enable them:
