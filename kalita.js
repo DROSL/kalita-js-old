@@ -1,25 +1,5 @@
 const API_ENDPOINT = "http://localhost:8080/speak";
 
-let SELECTION = null;
-
-// TODO: selection by keyboard will not fire event
-document.addEventListener("mouseup", () => {
-	const selection = window.getSelection();
-	if (selection && selection.toString()) {
-		let text = encodeURIComponent(selection.toString());
-
-		if (SELECTION) {
-			SELECTION.destroy();
-		}
-		SELECTION = new KSelection(selection);
-		SELECTION.extend();
-		SELECTION.prepare();
-		SELECTION.highlight();
-
-		PLAYER.src = `${API_ENDPOINT}?text=${text}&language=german`;
-	}
-});
-
 class KSelection {
 	constructor(selection) {
 		this.selection = selection;
@@ -30,7 +10,6 @@ class KSelection {
 		this.markedWord = null;
 		this.timer = null;
 	}
-
 
 	get _nodes() {
 		const selection = this.selection;
@@ -204,6 +183,30 @@ class KSelection {
 	}
 
 }
+
+let SELECTION = null;
+
+document.addEventListener("selectstart", () => {
+	if (SELECTION) {
+		PLAYER.pause();
+		PLAYER.src = null;
+		SELECTION.destroy();
+	}
+});
+
+// TODO: selection by keyboard will not fire event
+document.addEventListener("mouseup", () => {
+	const selection = window.getSelection();
+	if (selection && selection.toString()) {
+		SELECTION = new KSelection(selection);
+		SELECTION.extend();
+		SELECTION.prepare();
+		SELECTION.highlight();
+
+		let text = encodeURIComponent(SELECTION.text);
+		PLAYER.src = `${API_ENDPOINT}?text=${text}&language=german`;
+	}
+});
 
 const PLAYER = document.createElement("audio");
 PLAYER.controls = true;
