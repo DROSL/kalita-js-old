@@ -1,19 +1,5 @@
 const API_ENDPOINT = "http://localhost:8080/speak";
 
-const PLAYER = document.createElement("audio");
-PLAYER.controls = true;
-PLAYER.autoplay = true;
-
-PLAYER.addEventListener("play", () => {
-	SELECTION.play(PLAYER.duration, PLAYER.currentTime);
-});
-
-PLAYER.addEventListener("pause", () => {
-	SELECTION.pause();
-});
-
-document.getElementById("kalita-player").appendChild(PLAYER);
-
 let SELECTION = null;
 
 // TODO: selection by keyboard will not fire event
@@ -25,20 +11,16 @@ document.addEventListener("mouseup", () => {
 		if (SELECTION) {
 			SELECTION.destroy();
 		}
-		SELECTION = new XSelection(selection);
+		SELECTION = new KSelection(selection);
 		SELECTION.extend();
+		SELECTION.prepare();
 		SELECTION.highlight();
 
 		PLAYER.src = `${API_ENDPOINT}?text=${text}&language=german`;
-	} else {
-		if (SELECTION) {
-			PLAYER.play();
-			SELECTION.play(PLAYER.duration * 1000, PLAYER.currentTime * 1000);
-		}
 	}
 });
 
-class XSelection {
+class KSelection {
 	constructor(selection) {
 		this.selection = selection;
 		this.range = selection.getRangeAt(0);
@@ -49,7 +31,8 @@ class XSelection {
 		this.timer = null;
 	}
 
-	get nodes() {
+
+	get _nodes() {
 		const selection = this.selection;
 		const parent = this.range.commonAncestorContainer;
 
@@ -90,8 +73,8 @@ class XSelection {
 		this.text = this.range.toString();
 	}
 
-	highlight() {
-		for (let node of this.nodes) {
+	prepare() {
+		for (let node of this._nodes) {
 			let nodeRange = document.createRange();
 
 			if (node === this.range.startContainer) {
@@ -107,7 +90,7 @@ class XSelection {
 			}
 
 			let markNode = document.createElement("span");
-			markNode.className = "kalita-marked";
+			//markNode.className = "kalita-marked";
 			nodeRange.surroundContents(markNode);
 			this.markNodes.push(markNode);
 
@@ -118,7 +101,6 @@ class XSelection {
 			while (endOffset <= textNode.nodeValue.length) {
 				if (textNode.nodeValue.charAt(endOffset) === " " || endOffset === textNode.nodeValue.length) {
 					if (endOffset > startOffset) {
-
 						let nodeRange = document.createRange();
 						nodeRange.setStart(textNode, startOffset);
 						nodeRange.setEnd(textNode, endOffset);
@@ -131,10 +113,11 @@ class XSelection {
 						textNode = markNode.lastChild;
 						startOffset = 0;
 						endOffset = 0;
-
 					}
+
 					startOffset = endOffset + 1;
 				}
+
 				endOffset++;
 			}
 		}
@@ -142,7 +125,19 @@ class XSelection {
 		this.selection.empty();
 	}
 
-	play(duration, offset = 0, callback) {
+	highlight() {
+		for (let markNode of this.markNodes) {
+			markNode.classList.add("kalita-marked");
+		}
+	}
+
+	lowlight() {
+		for (let markNode of this.markNodes) {
+			markNode.classList.remove("kalita-marked");
+		}
+	}
+
+	play(duration, offset = 0) {
 		clearInterval(this.timer);
 
 		const nowTime = new Date();
@@ -176,10 +171,6 @@ class XSelection {
 				this.markedWord.classList.remove("kalita-word");
 				this.markedWord == null;
 				clearInterval(this.timer);
-
-				if (typeof callback === "function") {
-					callback();
-				}
 			} if (currentWord + 1 < words.length && tickTime >= words[currentWord + 1].startAt) {
 				if (this.markedWord) {
 					this.markedWord.classList.remove("kalita-word");
@@ -199,6 +190,8 @@ class XSelection {
 	// TODO: still a little bit buggy
 	// elements do not seem to be really removed from the document
 	destroy() {
+		clearInterval(this.timer);
+
 		let wordNode;
 		while (wordNode = this.wordNodes.pop()) {
 			wordNode.replaceWith(...wordNode.childNodes);
@@ -211,3 +204,22 @@ class XSelection {
 	}
 
 }
+
+const PLAYER = document.createElement("audio");
+PLAYER.controls = true;
+PLAYER.autoplay = true;
+
+PLAYER.addEventListener("play", () => {
+	SELECTION.highlight();
+	SELECTION.play(PLAYER.duration, PLAYER.currentTime);
+});
+
+PLAYER.addEventListener("pause", () => {
+	SELECTION.pause();
+});
+
+PLAYER.addEventListener("ended", () => {
+	SELECTION.lowlight();
+});
+
+document.getElementById("kalita-player").appendChild(PLAYER);
