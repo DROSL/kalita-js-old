@@ -32,6 +32,10 @@ Our components require the use of JavaScript to function. Place the following `<
 <script src="kalita.js"></script>
 ```
 
+To use Kalita outside your local machine, the public address of your Kalita server must be entered in the first line of the `kalita.js` file.
+```javascript
+const API_ENDPOINT = "http://{KALITA_SERVER_ADDRESS}/speak";
+```
 
 ## Disclaimer
 
